@@ -1,0 +1,56 @@
+---
+import Icon from './Icon.astro';
+import type { Lang } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container row">
+    <p>
+      © {year} {profile.name}. {t('footer.built')}
+    </p>
+    <a href="#main" class="top">
+      {t('footer.top')}
+      <Icon name="arrowUp" size={15} />
+    </a>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: 2rem 2.5rem;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .top:hover {
+    color: var(--accent);
+  }
+</style>

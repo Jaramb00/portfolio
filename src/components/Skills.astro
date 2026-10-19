@@ -1,0 +1,99 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { l, type Lang } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { skillGroups } from '../data/skills';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="section" id="skills" aria-labelledby="skills-title">
+  <div class="container">
+    <SectionHeading
+      id="skills-title"
+      kicker={t('skills.kicker')}
+      title={t('skills.title')}
+      intro={t('skills.intro')}
+    />
+
+    <p class="legend" aria-hidden="true">
+      <span class="tag">{t('skills.used')}</span>
+      <span class="tag familiar">{t('skills.familiar')}</span>
+    </p>
+
+    <div class="groups">
+      {skillGroups.map((group) => (
+        <section class="group" aria-label={l(group.title, lang)}>
+          <h3 class="mono">{l(group.title, lang)}</h3>
+          <p class="visually-hidden">{t('skills.used')}:</p>
+          <ul class="tag-list">
+            {group.used.map((s) => (
+              <li class="tag">{s}</li>
+            ))}
+          </ul>
+          {group.familiar && (
+            <>
+              <p class="visually-hidden">{t('skills.familiar')}:</p>
+              <ul class="tag-list familiar-list">
+                {group.familiar.map((s) => (
+                  <li class="tag familiar">{s}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: -1.5rem 0 2rem;
+  }
+
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 1rem;
+  }
+
+  .group {
+    padding: 1.35rem 1.4rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  h3 {
+    margin-bottom: 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .tag {
+    white-space: normal;
+  }
+
+  .familiar-list {
+    margin-top: 0.4rem;
+  }
+
+  .familiar {
+    border-style: dashed;
+    border-color: var(--border-strong);
+    background: transparent;
+    color: var(--text-muted);
+  }
+</style>

@@ -1,0 +1,327 @@
+---
+import Icon from './Icon.astro';
+import { homePath, type Lang } from '../i18n';
+import { useTranslations, type UiKey } from '../i18n/ui';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const otherLang: Lang = lang === 'en' ? 'hr' : 'en';
+
+const nav: { id: string; key: UiKey }[] = [
+  { id: 'about', key: 'nav.about' },
+  { id: 'projects', key: 'nav.projects' },
+  { id: 'skills', key: 'nav.skills' },
+  { id: 'approach', key: 'nav.approach' },
+  { id: 'experience', key: 'nav.experience' },
+  { id: 'contact', key: 'nav.contact' },
+];
+---
+
+<header class="site-header" data-header>
+  <div class="container bar">
+    <a class="brand" href={homePath(lang)} aria-label={`${profile.name}, ${t('meta.title')}`}>
+      <span class="monogram" aria-hidden="true">
+        JA
+      </span>
+      <span class="brand-name">{profile.name}</span>
+    </a>
+
+    <nav class="nav" id="site-nav" aria-label={t('nav.label')} data-nav>
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={`#${item.id}`} data-nav-link>
+              {t(item.key)}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <a
+        class="lang-switch mono"
+        href={homePath(otherLang)}
+        hreflang={otherLang}
+        lang={otherLang}
+        aria-label={t('lang.switchLabel')}
+        data-lang-switch
+      >
+        {otherLang.toUpperCase()}
+      </a>
+      <button class="icon-btn" type="button" aria-label={t('theme.toggle')} data-theme-toggle>
+        <Icon name="moon" class="icon-moon" />
+        <Icon name="sun" class="icon-sun" />
+      </button>
+      <button
+        class="icon-btn menu-btn"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-nav"
+        data-menu-toggle
+        data-label-open={t('nav.menu')}
+        data-label-close={t('nav.close')}
+        aria-label={t('nav.menu')}
+      >
+        <Icon name="menu" class="icon-open" />
+        <Icon name="close" class="icon-close" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  const menuBtn = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const themeBtn = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  const langLink = document.querySelector<HTMLAnchorElement>('[data-lang-switch]');
+
+  // Mobile menu
+  const setMenu = (open: boolean) => {
+    if (!menuBtn || !header) return;
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute(
+      'aria-label',
+      (open ? menuBtn.dataset.labelClose : menuBtn.dataset.labelOpen) ?? '',
+    );
+    header.classList.toggle('menu-open', open);
+  };
+  menuBtn?.addEventListener('click', () =>
+    setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'),
+  );
+  nav
+    ?.querySelectorAll('[data-nav-link]')
+    .forEach((a) => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && header?.classList.contains('menu-open')) {
+      setMenu(false);
+      menuBtn?.focus();
+    }
+  });
+  window.matchMedia('(min-width: 900px)').addEventListener('change', () => setMenu(false));
+
+  // Theme toggle: explicit choice is remembered; otherwise follows the system.
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const currentTheme = () =>
+    document.documentElement.dataset.theme ?? (prefersDark.matches ? 'dark' : 'light');
+  themeBtn?.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      /* storage unavailable — theme still applies for this visit */
+    }
+  });
+
+  // Keep the current section when switching language.
+  langLink?.addEventListener('click', () => {
+    if (location.hash) langLink.href = langLink.pathname + location.hash;
+  });
+
+  // Highlight the nav link of the section in view.
+  const links = new Map<string, HTMLAnchorElement>();
+  nav?.querySelectorAll<HTMLAnchorElement>('[data-nav-link]').forEach((a) => {
+    links.set(a.hash.slice(1), a);
+  });
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        links.forEach((a) => a.removeAttribute('aria-current'));
+        links.get(entry.target.id)?.setAttribute('aria-current', 'true');
+      }
+    },
+    { rootMargin: '-45% 0px -50% 0px' },
+  );
+  links.forEach((_, id) => {
+    const section = document.getElementById(id);
+    if (section) observer.observe(section);
+  });
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .bar {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--text);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  .monogram {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+  }
+
+  .nav ul {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .nav a {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 0.93rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  .nav a:hover,
+  .nav a[aria-current] {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .lang-switch {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    height: 44px;
+    padding-inline: 0.5rem;
+    border-radius: 999px;
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .lang-switch:hover {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .icon-btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .icon-btn:hover {
+    background: var(--surface-2);
+  }
+
+  /* Theme icon: show the icon of the theme you would switch to.
+     :global() because the classes land on the Icon component's <svg>. */
+  .icon-btn :global(.icon-sun),
+  .icon-btn :global(.icon-close) {
+    display: none;
+  }
+  :global([data-theme='dark']) .icon-btn :global(.icon-sun) {
+    display: block;
+  }
+  :global([data-theme='dark']) .icon-btn :global(.icon-moon) {
+    display: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .icon-btn :global(.icon-sun) {
+      display: block;
+    }
+    :global(:root:not([data-theme='light'])) .icon-btn :global(.icon-moon) {
+      display: none;
+    }
+  }
+
+  .menu-btn {
+    display: none;
+  }
+
+  @media (max-width: 899px) {
+    .brand-name {
+      display: none;
+    }
+
+    .menu-btn {
+      display: grid;
+    }
+
+    .nav {
+      position: absolute;
+      inset: var(--header-h) 0 auto 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .menu-open .nav {
+      display: block;
+    }
+
+    .menu-open .menu-btn :global(.icon-open) {
+      display: none;
+    }
+
+    .menu-open .menu-btn :global(.icon-close) {
+      display: block;
+    }
+
+    .nav ul {
+      flex-direction: column;
+      padding: 0.75rem var(--gutter) 1rem;
+    }
+
+    .nav a {
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+    }
+  }
+
+  @media (min-width: 900px) and (max-width: 1080px) {
+    .brand-name {
+      display: none;
+    }
+  }
+</style>

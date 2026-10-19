@@ -1,0 +1,241 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import portrait from '../assets/photo/portrait.jpg';
+import { l, type Lang } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container grid">
+    <div class="copy">
+      <p class="status">
+        <span class="dot" aria-hidden="true"></span>
+        {t('hero.status')}
+      </p>
+
+      <p class="eyebrow mono">
+        {t('hero.eyebrow')}
+        <span class="sep" aria-hidden="true">
+          ·
+        </span>
+        <span class="loc">{l(profile.location, lang)}</span>
+      </p>
+      <h1 id="hero-title">{profile.name}</h1>
+      <p class="headline">{l(profile.headline, lang)}</p>
+      <p class="intro">{l(profile.intro, lang)}</p>
+
+      <div class="focus">
+        <span class="visually-hidden">{t('hero.focus')}:</span>
+        <ul class="tag-list">
+          {l(profile.focus, lang).map((f) => (
+            <li class="tag">{f}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="ctas">
+        <a class="btn btn-primary" href="#projects">
+          {t('hero.cta.projects')}
+          <Icon name="arrowDown" size={17} />
+        </a>
+        <a class="btn btn-secondary" href={l(profile.cv, lang)} download>
+          <Icon name="download" size={17} />
+          {t('hero.cta.cv')}
+        </a>
+        <a class="btn btn-ghost" href="#contact">
+          {t('hero.cta.contact')}
+          <Icon name="arrowRight" size={17} />
+        </a>
+      </div>
+    </div>
+
+    <figure class="portrait">
+      <Picture
+        src={portrait}
+        formats={['avif', 'webp']}
+        widths={[360, 540, 720]}
+        sizes="(min-width: 900px) 360px, 70vw"
+        alt={profile.name}
+        loading="eager"
+        fetchpriority="high"
+      />
+      <figcaption class="mono">MSc Computing · FESB · 2026</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.8fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 1.75rem;
+    padding: 0.35rem 0.85rem 0.35rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22a06b;
+    box-shadow: 0 0 0 3px rgb(34 160 107 / 0.18);
+  }
+
+  .eyebrow {
+    margin-bottom: 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .sep {
+    margin-inline: 0.4rem;
+    color: var(--border-strong);
+  }
+
+  .loc {
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: none;
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 7.2vw, 4.75rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+  }
+
+  .headline {
+    margin-top: 1.1rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    max-width: 30ch;
+  }
+
+  .intro {
+    margin-top: 1rem;
+    max-width: 58ch;
+    color: var(--text-muted);
+  }
+
+  .focus {
+    margin-top: 1.5rem;
+  }
+
+  .focus .tag {
+    background: var(--accent-soft);
+    border-color: transparent;
+    color: var(--accent);
+  }
+
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .portrait {
+    position: relative;
+    margin: 0;
+    justify-self: end;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .portrait :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    background: var(--surface-2);
+  }
+
+  .portrait figcaption {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    border: 1px solid var(--border);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  @media (max-width: 899px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .portrait {
+      grid-row: 1;
+      justify-self: start;
+      max-width: 200px;
+    }
+
+    .status {
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .portrait {
+      max-width: 140px;
+    }
+
+    .portrait figcaption {
+      display: none;
+    }
+
+    .ctas .btn {
+      flex: 1 1 100%;
+    }
+
+    .eyebrow .sep,
+    .eyebrow .loc {
+      display: block;
+      margin: 0.25rem 0 0;
+    }
+
+    .eyebrow .sep {
+      display: none;
+    }
+  }
+</style>

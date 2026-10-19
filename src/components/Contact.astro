@@ -1,0 +1,217 @@
+---
+import Icon from './Icon.astro';
+import { l, type Lang } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="section contact" id="contact" aria-labelledby="contact-title">
+  <div class="container">
+    <div class="panel">
+      <p class="kicker mono" aria-hidden="true">
+        {t('contact.kicker')}
+      </p>
+      <h2 id="contact-title">{t('contact.title')}</h2>
+      <p class="text">{t('contact.text')}</p>
+
+      <div class="email-row">
+        <a class="email" href={`mailto:${profile.email}`}>
+          <Icon name="mail" size={22} />
+          {profile.email}
+        </a>
+        <button
+          class="copy"
+          type="button"
+          data-copy={profile.email}
+          data-copied-label={t('contact.copied')}
+        >
+          <Icon name="copy" size={16} />
+          <span data-copy-label>{t('contact.copy')}</span>
+        </button>
+        <span class="visually-hidden" role="status" data-copy-status></span>
+      </div>
+
+      <ul class="links">
+        <li>
+          <a
+            class="btn btn-secondary"
+            href={profile.links.linkedin}
+            target="_blank"
+            rel="noopener noreferrer me"
+          >
+            <Icon name="linkedin" size={17} />
+            LinkedIn
+            <span class="visually-hidden">{t('common.newTab')}</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="btn btn-secondary"
+            href={profile.links.github}
+            target="_blank"
+            rel="noopener noreferrer me"
+          >
+            <Icon name="github" size={17} />
+            GitHub
+            <span class="visually-hidden">{t('common.newTab')}</span>
+          </a>
+        </li>
+        <li>
+          <a class="btn btn-secondary" href={l(profile.cv, lang)} download>
+            <Icon name="download" size={17} />
+            {t('contact.cv')}
+          </a>
+        </li>
+      </ul>
+
+      <p class="location">
+        <Icon name="pin" size={16} />
+        {l(profile.location, lang)}
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+    const label = btn.querySelector<HTMLElement>('[data-copy-label]');
+    const status = btn.parentElement?.querySelector<HTMLElement>('[data-copy-status]');
+    const original = label?.textContent ?? '';
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy ?? '');
+        const done = btn.dataset.copiedLabel ?? '';
+        if (label) label.textContent = done;
+        if (status) status.textContent = done;
+        setTimeout(() => {
+          if (label) label.textContent = original;
+          if (status) status.textContent = '';
+        }, 2000);
+      } catch {
+        // Clipboard blocked: fall back to the mailto link next to the button.
+        window.location.href = `mailto:${btn.dataset.copy}`;
+      }
+    });
+  });
+</script>
+
+<style>
+  .panel {
+    padding: clamp(2rem, 6vw, 4rem);
+    border-radius: var(--radius-lg);
+    background: var(--panel-bg);
+    color: var(--panel-text);
+    border: 1px solid var(--border);
+  }
+
+  .kicker {
+    margin-bottom: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--panel-muted);
+  }
+
+  h2 {
+    font-size: clamp(2.2rem, 5.5vw, 3.5rem);
+  }
+
+  .text {
+    margin-top: 1rem;
+    max-width: 56ch;
+    color: var(--panel-muted);
+  }
+
+  .email-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-top: 2rem;
+  }
+
+  .email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 4vw, 2rem);
+    font-weight: 500;
+    color: var(--panel-text);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--panel-text) 35%, transparent);
+    text-underline-offset: 0.25em;
+    overflow-wrap: anywhere;
+  }
+
+  .email:hover {
+    color: var(--panel-text);
+    text-decoration-color: var(--panel-text);
+  }
+
+  .copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 40px;
+    padding: 0.4rem 0.85rem;
+    border: 1px solid color-mix(in srgb, var(--panel-text) 30%, transparent);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--panel-text);
+    font: 500 0.85rem/1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .copy:hover {
+    border-color: var(--panel-text);
+  }
+
+  .links {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .links .btn {
+    background: transparent;
+    border-color: color-mix(in srgb, var(--panel-text) 30%, transparent);
+    color: var(--panel-text);
+  }
+
+  .links .btn:hover {
+    background: var(--panel-text);
+    border-color: var(--panel-text);
+    color: var(--panel-bg);
+  }
+
+  .location {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: var(--panel-muted);
+  }
+
+  .panel :focus-visible {
+    outline-color: var(--panel-text);
+  }
+
+  @media (max-width: 479px) {
+    .links li,
+    .links .btn {
+      width: 100%;
+    }
+  }
+</style>

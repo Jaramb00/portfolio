@@ -1,0 +1,28 @@
+---
+/** The full one-page site for a given language. Reorder or remove sections here. */
+import Base from '../layouts/Base.astro';
+import Hero from './Hero.astro';
+import About from './About.astro';
+import Projects from './Projects.astro';
+import Skills from './Skills.astro';
+import Approach from './Approach.astro';
+import Experience from './Experience.astro';
+import Contact from './Contact.astro';
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<Base lang={lang}>
+  <Hero lang={lang} />
+  <About lang={lang} />
+  <Projects lang={lang} />
+  <Skills lang={lang} />
+  <Approach lang={lang} />
+  <Experience lang={lang} />
+  <Contact lang={lang} />
+</Base>

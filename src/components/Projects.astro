@@ -1,0 +1,180 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import SectionHeading from './SectionHeading.astro';
+import ProjectCard from './ProjectCard.astro';
+import { l, type Lang } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { featuredProjects, otherProjects } from '../data/projects';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="section" id="projects" aria-labelledby="projects-title">
+  <div class="container">
+    <SectionHeading
+      id="projects-title"
+      kicker={t('projects.kicker')}
+      title={t('projects.title')}
+      intro={t('projects.intro')}
+    />
+
+    <div class="featured">
+      {featuredProjects.map((project, i) => (
+        <ProjectCard project={project} lang={lang} index={i} />
+      ))}
+    </div>
+
+    {otherProjects.length > 0 && (
+      <div class="more">
+        <h3>{t('projects.more')}</h3>
+        <p class="more-intro">{t('projects.moreIntro')}</p>
+        <ul class="mini-grid">
+          {otherProjects.map((p) => (
+            <li class="mini">
+              {p.image && (
+                <Picture
+                  src={p.image}
+                  formats={['avif', 'webp']}
+                  widths={[400, 640, 800]}
+                  sizes="(min-width: 760px) 520px, 92vw"
+                  alt={p.imageAlt ? l(p.imageAlt, lang) : ''}
+                />
+              )}
+              <div class="mini-body">
+                <p class="mini-label mono">{l(p.label, lang)}</p>
+                <h4>{l(p.title, lang)}</h4>
+                <p class="mini-summary">{l(p.summary, lang)}</p>
+                <ul class="tag-list">
+                  {p.stack.map((s) => (
+                    <li class="tag">{s}</li>
+                  ))}
+                </ul>
+                <div class="mini-links">
+                  {p.links.demo && (
+                    <a href={p.links.demo} target="_blank" rel="noopener noreferrer">
+                      {t('projects.demo')}
+                      <Icon name="external" size={15} />
+                      <span class="visually-hidden">
+                        : {l(p.title, lang)} {t('common.newTab')}
+                      </span>
+                    </a>
+                  )}
+                  {p.links.repo && (
+                    <a href={p.links.repo} target="_blank" rel="noopener noreferrer">
+                      {t('projects.code')}
+                      <Icon name="github" size={15} />
+                      <span class="visually-hidden">
+                        : {l(p.title, lang)} {t('common.newTab')}
+                      </span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .featured {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .more {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+  }
+
+  .more h3 {
+    font-size: 1.35rem;
+  }
+
+  .more-intro {
+    margin-top: 0.5rem;
+    max-width: 64ch;
+    color: var(--text-muted);
+  }
+
+  .mini-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .mini {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .mini :global(img) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: top center;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+
+  .mini-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+    padding: 1.25rem 1.35rem 1.35rem;
+  }
+
+  .mini-label {
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .mini h4 {
+    font-size: 1.15rem;
+  }
+
+  .mini-summary {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .mini-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .mini-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    font-weight: 600;
+    font-size: 0.93rem;
+  }
+
+  @media (max-width: 759px) {
+    .mini-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

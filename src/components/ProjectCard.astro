@@ -1,0 +1,253 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import ArchitectureDiagram from './ArchitectureDiagram.astro';
+import { l, type Lang } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+  lang: Lang;
+  index: number;
+}
+
+const { project, lang, index } = Astro.props;
+const t = useTranslations(lang);
+const title = l(project.title, lang);
+const headingId = `project-${project.slug}`;
+
+const details = [
+  { label: t('projects.problem'), text: project.problem },
+  { label: t('projects.solution'), text: project.solution },
+  { label: t('projects.learned'), text: project.learned },
+].filter((d) => d.text);
+---
+
+<article class="project" aria-labelledby={headingId}>
+  <div class="media">
+    <div class="media-inner">
+      {project.image ? (
+        <Picture
+          src={project.image}
+          formats={['avif', 'webp']}
+          widths={[480, 720, 960]}
+          sizes="(min-width: 960px) 440px, 92vw"
+          alt={project.imageAlt ? l(project.imageAlt, lang) : ''}
+        />
+      ) : project.architecture ? (
+        <ArchitectureDiagram layers={project.architecture} title={title} />
+      ) : null}
+    </div>
+  </div>
+
+  <div class="body">
+    <p class="label mono">
+      <span class="num">{String(index + 1).padStart(2, '0')}</span>
+      {l(project.label, lang)}
+    </p>
+    <h3 id={headingId}>{title}</h3>
+    <p class="summary">{l(project.summary, lang)}</p>
+
+    {details.length > 0 && (
+      <dl class="details">
+        {details.map((d) => (
+          <div>
+            <dt>{d.label}</dt>
+            <dd>{d.text && l(d.text, lang)}</dd>
+          </div>
+        ))}
+      </dl>
+    )}
+
+    {project.highlights && (
+      <div class="highlights">
+        <h4 class="visually-hidden">{t('projects.highlights')}</h4>
+        <ul>
+          {l(project.highlights, lang).map((h) => (
+            <li>{h}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <h4 class="visually-hidden">{t('projects.stack')}</h4>
+    <ul class="tag-list stack">
+      {project.stack.map((s) => (
+        <li class="tag">{s}</li>
+      ))}
+    </ul>
+
+    <div class="links">
+      {project.links.repo && (
+        <a
+          class="btn btn-secondary"
+          href={project.links.repo}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon name="github" size={17} />
+          {t('projects.code')}
+          <span class="visually-hidden">
+            : {title} {t('common.newTab')}
+          </span>
+        </a>
+      )}
+      {project.links.demo && (
+        <a
+          class="btn btn-primary"
+          href={project.links.demo}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon name="external" size={17} />
+          {t('projects.demo')}
+          <span class="visually-hidden">
+            : {title} {t('common.newTab')}
+          </span>
+        </a>
+      )}
+      {project.links.docs && (
+        <a
+          class="btn btn-secondary"
+          href={project.links.docs}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon name="doc" size={17} />
+          {t('projects.docs')}
+          <span class="visually-hidden">
+            : {title} {t('common.newTab')}
+          </span>
+        </a>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .project {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .media {
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+    border-right: 1px solid var(--border);
+    background:
+      radial-gradient(circle at 1px 1px, var(--border-strong) 1px, transparent 0) 0 0 / 18px 18px,
+      var(--surface-2);
+  }
+
+  .media-inner {
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+  }
+
+  .media :global(img) {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    background: var(--surface);
+  }
+
+  .body {
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  }
+
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .num {
+    color: var(--accent);
+  }
+
+  h3 {
+    font-size: clamp(1.35rem, 2.6vw, 1.7rem);
+  }
+
+  .summary {
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .details {
+    display: grid;
+    gap: 1rem;
+    margin: 1.5rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  dt {
+    margin-bottom: 0.2rem;
+    font: 500 0.75rem/1.4 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.98rem;
+  }
+
+  .highlights ul {
+    margin-top: 1.25rem;
+    padding: 1rem 1.1rem 1rem 2.1rem;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    font-size: 0.94rem;
+  }
+
+  .highlights li + li {
+    margin-top: 0.35rem;
+  }
+
+  .highlights li::marker {
+    color: var(--accent);
+  }
+
+  .stack {
+    margin-top: 1.5rem;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 959px) {
+    .project {
+      grid-template-columns: 1fr;
+    }
+
+    .media {
+      border-right: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .media-inner {
+      position: static;
+    }
+  }
+</style>

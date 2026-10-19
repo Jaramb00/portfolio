@@ -1,0 +1,55 @@
+---
+interface Props {
+  id: string;
+  kicker: string;
+  title: string;
+  intro?: string;
+}
+
+const { id, kicker, title, intro } = Astro.props;
+---
+
+<header class="section-heading">
+  <p class="kicker mono" aria-hidden="true">
+    {kicker}
+  </p>
+  <h2 id={id}>{title}</h2>
+  {intro && <p class="intro">{intro}</p>}
+</header>
+
+<style>
+  .section-heading {
+    max-width: 680px;
+    margin-bottom: clamp(2rem, 5vw, 3.25rem);
+  }
+
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .kicker::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--accent);
+    transform: rotate(45deg);
+  }
+
+  h2 {
+    font-size: clamp(1.9rem, 4.2vw, 2.75rem);
+  }
+
+  .intro {
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-size: 1.075rem;
+  }
+</style>

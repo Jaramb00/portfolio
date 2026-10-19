@@ -1,0 +1,85 @@
+---
+/** Simple layered diagram used when a project has no screenshot. */
+interface Props {
+  layers: string[];
+  title: string;
+}
+
+const { layers, title } = Astro.props;
+---
+
+<div class="diagram" role="img" aria-label={`${title}: ${layers.join(' → ')}`}>
+  <div class="dots" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <ol aria-hidden="true">
+    {layers.map((layer, i) => (
+      <li style={`--i:${i}`}>
+        <span class="idx">{String(i + 1).padStart(2, '0')}</span>
+        {layer}
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .diagram {
+    padding: 1.1rem 1.25rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .dots {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+  }
+
+  .dots span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--border-strong);
+  }
+
+  ol {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    margin: 0;
+  }
+
+  li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    margin-left: calc(var(--i) * 0.9rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    font: 500 0.82rem/1.35 var(--font-mono);
+    color: var(--text);
+    box-shadow: 0 1px 0 var(--border);
+  }
+
+  li + li::before {
+    content: '';
+    position: absolute;
+    left: 1.3rem;
+    top: calc(-1.1rem - 1px);
+    height: 1.1rem;
+    border-left: 1.5px dashed var(--accent);
+  }
+
+  .idx {
+    color: var(--accent);
+    font-size: 0.72rem;
+  }
+</style>
