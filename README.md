@@ -79,31 +79,15 @@ once you have shipped something with it.
 
 ## Deploy (Vercel)
 
-1. Put this folder in a GitHub repository:
-   ```bash
-   git init && git add -A && git commit -m "Portfolio"
-   # create an empty repo on github.com (e.g. "portfolio"), then:
-   git remote add origin https://github.com/Jaramb00/portfolio.git
-   git push -u origin main
-   ```
-2. On [vercel.com](https://vercel.com) → **Add New… → Project** → import the repo.
-   Vercel detects Astro automatically; the defaults are correct
-   (build `npm run build`, output `dist`). Click **Deploy**.
-3. If Vercel gives you a different address than `josip-arambasic.vercel.app`, either rename
-   the project in Vercel (Settings → Domains) or update `SITE_URL` in
-   `astro.config.mjs` and the `Sitemap:` line in `public/robots.txt`.
+Live at **https://josip-arambasic.from.hr**, hosted on Vercel from
+[github.com/Jaramb00/portfolio](https://github.com/Jaramb00/portfolio).
+Every push to `main` redeploys automatically; there is nothing else to run.
 
-Every push to `main` redeploys automatically.
-
-### Moving to josip-arambasic.from.hr later
-
-1. Vercel → Project → **Settings → Domains** → add `josip-arambasic.from.hr`.
-2. Vercel shows the DNS records to create (usually a `CNAME` to `cname.vercel-dns.com`,
-   or an `A` record for the apex). Add them where the `.from.hr` domain is managed.
-3. In this repo, set `SITE_URL` in `astro.config.mjs` to `https://josip-arambasic.from.hr`,
-   update `public/robots.txt`, commit and push. Canonical URLs, hreflang tags, the sitemap
-   and sharing metadata all follow from `SITE_URL`.
-4. Optional: in Vercel, redirect the `.vercel.app` domain to the new one.
+- The custom domain is set in Vercel → Project → **Settings → Domains**, and its DNS record
+  is managed in the CARNET domain portal (the `.from.hr` registrar).
+- If the domain ever changes, update `SITE_URL` in `astro.config.mjs` and the `Sitemap:` line
+  in `public/robots.txt`. Canonical URLs, hreflang tags, the sitemap and sharing metadata all
+  follow from `SITE_URL`.
 
 ## Quality checks done
 

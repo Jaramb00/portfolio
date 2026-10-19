@@ -2,8 +2,8 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// Change this once the custom domain (josip-arambasic.from.hr) is connected.
-const SITE_URL = 'https://josip-arambasic.vercel.app';
+// Public address of the site. Canonical URLs, hreflang and the sitemap use it.
+const SITE_URL = 'https://josip-arambasic.from.hr';
 
 export default defineConfig({
   site: SITE_URL,
