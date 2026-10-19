@@ -30,8 +30,8 @@ const ui = {
     'about.learning': 'Currently learning',
     'about.goals': 'What I am looking for',
     'about.photoAlt':
-      'Josip Arambašić presenting his Master’s thesis at FESB, standing in front of the projected title slide',
-    'about.caption': 'Defending my Master’s thesis at FESB, 2026',
+      'Josip Arambašić holding his bound Master’s thesis, standing with three people in front of the projected title slide at FESB',
+    'about.caption': 'After defending my Master’s thesis at FESB, 2026',
     'projects.kicker': 'Selected work',
     'projects.title': 'Featured projects',
     'projects.intro':
@@ -102,8 +102,8 @@ const ui = {
     'about.learning': 'Trenutno učim',
     'about.goals': 'Što tražim',
     'about.photoAlt':
-      'Josip Arambašić brani diplomski rad na FESB-u, stoji ispred projicirane naslovne stranice rada',
-    'about.caption': 'Obrana diplomskog rada na FESB-u, 2026.',
+      'Josip Arambašić drži ukoričeni diplomski rad i stoji s još troje ljudi ispred projicirane naslovne stranice rada na FESB-u',
+    'about.caption': 'Nakon obrane diplomskog rada na FESB-u, 2026.',
     'projects.kicker': 'Odabrani radovi',
     'projects.title': 'Istaknuti projekti',
     'projects.intro':

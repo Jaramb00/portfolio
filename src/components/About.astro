@@ -1,7 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import SectionHeading from './SectionHeading.astro';
-import photo from '../assets/photo/thesis-defense-full.jpg';
+import photo from '../assets/photo/thesis-defense-group.jpg';
 import { l, type Lang } from '../i18n';
 import { useTranslations } from '../i18n/ui';
 import { profile } from '../data/profile';
@@ -115,7 +115,7 @@ const t = useTranslations(lang);
 
   .photo :global(img) {
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);

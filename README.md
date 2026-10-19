@@ -32,7 +32,7 @@ src/
     approach.ts          "My approach" items
     experience.ts        work, education, spoken languages
   i18n/ui.ts             interface text (menu, buttons, headings) in EN + HR
-  assets/photo/          portrait.jpg (hero), thesis-defense-full.jpg (About)
+  assets/photo/          portrait.jpg (hero), thesis-defense-group.jpg (About)
   assets/projects/       project screenshots
   components/            one component per section + reusable pieces
   styles/global.css      design tokens (colours, fonts, spacing) + buttons/tags
@@ -66,7 +66,7 @@ once you have shipped something with it.
 (keep the file names, or change the paths in `profile.ts`).
 
 **Change the photo** — replace `src/assets/photo/portrait.jpg` (portrait, 4:5) and/or
-`thesis-defense-full.jpg`, then run `npm run og` so the sharing image uses the new photo.
+`thesis-defense-group.jpg`, then run `npm run og` so the sharing image uses the new photo.
 
 **Add a section** (e.g. an AI-focused section later) — create
 `src/components/MySection.astro` (copy `Approach.astro` as a template), put its content in
